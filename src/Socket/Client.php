@@ -51,7 +51,7 @@ class Client extends Server {
   public function write($str){
   
     // Display output back to server
-    return (int)socket_write($this->socket,$str);
+    return (int)@socket_write($this->socket,$str);
   
   }//method
 

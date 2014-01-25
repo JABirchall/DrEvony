@@ -25,7 +25,7 @@ $amfLogin = NEW YaBOB_Login();
 $loginInfo = $amfLogin->_("youremail","yourpassword"); unset($amfLogin);
 $loginData = $AMF->AMFlength($loginInfo).$loginInfo;
 
-@$s->write($amfHandshake); unset($amfHandshake);
+$s->write($amfHandshake); unset($amfHandshake);
 $s->write($loginData);
 
 echo 'Getting response!',PHP_EOL;
