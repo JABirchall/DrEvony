@@ -25,26 +25,27 @@ $amfLogin = NEW YaBOB_Login();
 $loginInfo = $amfLogin->_("youremail","yourpassword"); unset($amfLogin);
 $loginData = $AMF->AMFlength($loginInfo).$loginInfo;
 
-$s->write($amfHandshake); unset($amfHandshake);
+@$s->write($amfHandshake); unset($amfHandshake);
 $s->write($loginData);
 
 echo 'Getting response!',PHP_EOL;
 
-$out = $s->read();
-$out .= $s->read();
-$out .= $s->read();
+while($out = $s->read()){
+	$out .= @$s->read();
+	if (strpos($out, "\n") !== false) break;
+}
 
 $out = substr($out, 4);
 
 $response = $AMF->destructAMF($out);
-if($response->data['msg'] === "login success") echo 'server returned: '.$response->data['msg'];
-	else echo 'server returned: '.$response->data['msg'];
+if(@$response->data['msg'] === "login success") echo 'server returned: '.$response->data['msg'];
+	else echo 'server returned: '.$response->data['errorMsg'];
 
 for($x = 0; $x <= 800; $x += 20)
 {
 	for($y = 0; $y <= 800; $y += 20)
 	{
-		echo "Fetching map data for Chunk [20x20] : (".$x.",".$y.")\n"; //PlaceHolder
+		//echo "Fetching map data for Chunk [20x20] : (".$x.",".$y.")\n"; //PlaceHolder
 	}
 }
 
