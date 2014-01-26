@@ -9,6 +9,9 @@ require_once('YaBOB/AMF.php');
 require_once('YaBOB/Login.php');
 require_once('YaBOB/Handshake.php');
 require_once('YaBOB/common/Mapinfo.php');
+/* Account infomation */
+$acc_email = "acc_email"; // Put your email address here
+$acc_password = "acc_password"; // Put your password here
 
 
 error_reporting(-1);
@@ -25,7 +28,7 @@ $AMF = NEW YaBOB_AMF();
 $amfHandshake = NEW YaBOB_Handshake();
 $amfLogin = NEW YaBOB_Login();
 
-$loginInfo = $amfLogin->_("email","password"); unset($amfLogin);
+$loginInfo = $amfLogin->_($acc_email,$acc_password); unset($amfLogin);
 $loginData = $AMF->AMFlength($loginInfo).$loginInfo;
 
 $s->write($amfHandshake); unset($amfHandshake);
@@ -59,7 +62,7 @@ $out = substr($out, 4);
 $response = $AMF->destructAMF($out);
 
 if(@$response->data['msg'] === "login success") echo 'server returned: '.$response->data['msg']."\n";
-	else echo 'server returned: '.$response->data['errorMsg']."\n";
+	else { echo 'server returned: '.$response->data['errorMsg']."\n"; exit;}
 	//var_dump($response);
 
 $map = NEW YaBOB_Common_mapInfo();
@@ -95,7 +98,7 @@ for($x = 1; $x <= 781; $x += 20)
 			$out = substr($out, 4);
 			$out = $AMF->destructAMF($out);
 		}
-		file_put_contents('maplog.txt',json_encode($out),FILE_APPEND);
+		file_put_contents('maplog.txt',json_encode($out)."\n",FILE_APPEND);
 	}
 }
 
