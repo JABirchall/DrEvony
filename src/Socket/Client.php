@@ -19,14 +19,14 @@ class Client extends Server {
    *  
    *  @var  integer
    */
-  protected $timeout_milliseconds = 0;
+  protected $timeout_milliseconds = 1;
   
   /**
    *  how many seconds before timeout
    *  
    *  @var  integer
    */
-  protected $timeout_seconds = 2;
+  protected $timeout_seconds = 1;
 
   /**
    *  create an instance

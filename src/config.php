@@ -7,5 +7,5 @@ $address = '216.66.6.139';
 $port = 443;
 
 
-error_reporting(-1);
+error_reporting(E_ALL);
 ini_set('display_errors','on');

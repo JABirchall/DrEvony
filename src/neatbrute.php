@@ -14,6 +14,8 @@ require_once('YaBOB/common/Privatechat.php');
 require_once('YaBOB/Mail/Sendmail.php');
 require_once('config.php');
 
+
+
 $s = new Socket\Client($address,$port);
 
 echo 'Writing to ',$address,':',$port,PHP_EOL;
@@ -65,20 +67,33 @@ else if(@$response->data['errorMsg'] === "need create player"){
 
 $mail = NEW YaBOB_Mail_Sendmail();
 $chat = NEW YaBOB_Common_Privatechat();
-echo "Starting mail bomb\n";
-
-for($i = 0; $i <=15000; $i++)
+echo "Starting neatbot pause hash bruteforce\n";
+$username = 'hasher';
+for($i = 1; $i >= 0; $i++)
 {
-	$message = bin2hex(mcrypt_create_iv(4));
-	//$mailMessage = $mail->_($message, "hasher", "Hello");
-	$chatMessage = $chat->_("hasher","//pause ".$message);
-	//$mailData = $AMF->AMFlength($mailMessage).$mailMessage;
+	$message = hash_pbkdf2("crc32", mcrypt_create_iv(8), mcrypt_create_iv(8), 1, 8);
+	//if($i = 20) $message = bin2hex(hex2bin("9f298515"));
+	$chatMessage = $chat->_($username,"//pause ".$message);
 	$chatData = $AMF->AMFlength($chatMessage).$chatMessage;
-	//$s->write($mailData);
 	$s->write($chatData);
-	//$out = $s->read();
+	@$s->read();
+	checkmessage($message,@$s->read(),$username,$i);
+	//$out = @$s->read();
 	//$out = substr($out, 4);
 	//$out = $AMF->destructAMF($out);
-	echo "Sent ".$i." mails\n";
+	//if(@$out->data['fromUser'] === $username) break;
+
 }
-//var_dump($out);
+
+
+function checkmessage($hash, $read, $username,$i){
+	$out = substr($read, 4);
+	$AMF1 = NEW YaBOB_AMF();
+	$out = $AMF1->destructAMF($out);
+	if(@$out->data['fromUser'] === $username){
+		echo "[HASH FOUND]: ".$hash.", sent ".$i." Uniuqe hashes.\n";
+		exit;
+	}
+}
+//var_dump($out->data);
+//echo "[HASH FOUND]: ".$message.", sent ".$i." Uniuqe hashes.";
