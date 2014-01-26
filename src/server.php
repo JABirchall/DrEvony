@@ -3,7 +3,11 @@
 // code: http://devzone.zend.com/article/1086
 include('out_class.php');
 include('Socket/Server.php');
-include('Amfphp/ClassLoader.php');
+require_once( 'amfphp/core/amf/app/Gateway.php');
+require_once( AMFPHP_BASE . 'amf/io/AMFSerializer.php');
+require_once( AMFPHP_BASE . 'amf/io/AMFDeserializer.php');
+require_once('YaBOB/AMF.php');
+
 error_reporting(-1);
 
 $a = [1 => 1];
@@ -20,7 +24,7 @@ $port = 9080;
 echo 'Listening on ',$address,':',$port,PHP_EOL;
 
 $s = new Socket\Server($address,$port);
-$AMF = NEW Amfphp_Core_Amf_Deserializer();
+
 
 $s->listen(function($a, $b, $input){
   $AMF = NEW Amfphp_Core_Amf_Deserializer();

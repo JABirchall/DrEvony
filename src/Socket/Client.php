@@ -26,7 +26,7 @@ class Client extends Server {
    *  
    *  @var  integer
    */
-  protected $timeout_seconds = 1;
+  protected $timeout_seconds = 2;
 
   /**
    *  create an instance
@@ -61,14 +61,18 @@ class Client extends Server {
    *  @see  _read()
    *  @return string  the value read from the server
    */
-  public function read(){ return $this->_read($this->socket); }//method
+  public function read(){
+    return $this->_read($this->socket);
+  }//method
   
   /**
    *  disabled on clients, only available for servers
    *     
    *  @see  parent::listen()
    */
-  public function listen($callback){ throw new \BadMethodCallException('listen is not supported on Clients'); }//method
+  public function listen($callback){
+    throw new \BadMethodCallException('listen is not supported on Clients');
+  }//method
   
   /**
    *  connect to a socket for writing/reading
