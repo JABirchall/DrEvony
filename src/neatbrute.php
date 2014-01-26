@@ -64,25 +64,26 @@ else if(@$response->data['errorMsg'] === "need create player"){
 	//var_dump($response);
 
 
+function mathRandom () {
+  return (float)rand()/(float)getrandmax();
+}
 
 $mail = NEW YaBOB_Mail_Sendmail();
 $chat = NEW YaBOB_Common_Privatechat();
 echo "Starting neatbot pause hash bruteforce\n";
 $username = 'hasher';
+$your_name = 'DrWhat';
+
 for($i = 1; $i >= 0; $i++)
 {
-	$message = hash_pbkdf2("crc32", mcrypt_create_iv(8), mcrypt_create_iv(8), 1, 8);
-	//if($i = 20) $message = bin2hex(hex2bin("9f298515"));
+	//$message = hash_pbkdf2("crc32", mcrypt_create_iv(8), mcrypt_create_iv(8), 1, 8);
+	$message = $hash = hash_pbkdf2("md5", md5("abcd".mathRandom()).$player_name." ".$your_name, '', 1, 8);
+
 	$chatMessage = $chat->_($username,"//pause ".$message);
 	$chatData = $AMF->AMFlength($chatMessage).$chatMessage;
 	$s->write($chatData);
 	@$s->read();
 	checkmessage($message,@$s->read(),$username,$i);
-	//$out = @$s->read();
-	//$out = substr($out, 4);
-	//$out = $AMF->destructAMF($out);
-	//if(@$out->data['fromUser'] === $username) break;
-
 }
 
 
