@@ -77,7 +77,7 @@ $your_name = 'DrWhat';
 for($i = 1; $i >= 0; $i++)
 {
 	//$message = hash_pbkdf2("crc32", mcrypt_create_iv(8), mcrypt_create_iv(8), 1, 8);
-	$message = $hash = hash_pbkdf2("md5", md5("abcd".mathRandom()).$username." ".$your_name, '', 1, 8);
+	$message = hash_pbkdf2("md5", md5("abcd".mathRandom()).$username." ".$your_name, '', 1, 8);
 
 	$chatMessage = $chat->_($username,"//pause ".$message);
 	$chatData = $AMF->AMFlength($chatMessage).$chatMessage;
