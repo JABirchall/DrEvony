@@ -8,13 +8,11 @@ require_once( AMFPHP_BASE . 'amf/io/AMFDeserializer.php');
 require_once('YaBOB/AMF.php');
 require_once('YaBOB/Login.php');
 require_once('YaBOB/Handshake.php');
-//require_once('YaBOB/common/Mapinfo.php');
+
 require_once('YaBOB/common/Createnewplayer.php');
 require_once('YaBOB/common/Privatechat.php');
 require_once('YaBOB/Mail/Sendmail.php');
 require_once('config.php')
-
-
 
 $s = new Socket\Client($address,$port);
 
@@ -63,40 +61,24 @@ else if(@$response->data['errorMsg'] === "need create player"){
 //$s->read();
 	//var_dump($response);
 
-$map = NEW YaBOB_Common_mapInfo();
 
-for($x = 1; $x <= 781; $x += 20)
+
+$mail = NEW YaBOB_Mail_Sendmail();
+$chat = NEW YaBOB_Common_Privatechat();
+echo "Starting mail bomb\n";
+
+for($i = 0; $i <=1000; $i++)
 {
-	for($y = 1; $y <= 781; $y += 20)
-	{
-		$x2 = $x+20;
-		$y2 = $y+20;
-		echo "Fetching map data for Chunk [20x20] : (".$x.",".$y2.") to(".$x2.",".$y.")\n"; //PlaceHolder
-		$mapChunk = $map->_($x, $y2, $x2, $y);
-		$mapData = $AMF->AMFlength($mapChunk).$mapChunk;
-		$s->write($mapData);
-		$in = $s->read();
-		unset($out);
-		while($in){
-			$out = @$out.$in;
-			$in = @$s->read();
-		}
-		//echo bin2hex($out)."\n";
-
-		$out = substr($out, 4);
-		$out = $AMF->destructAMF($out);
-
-		if($out->cmd === "server.SystemInfoMsg"){
-			$out = "";
-			$in = $s->read();
-			while($in){
-				$out = @$out.$in;
-				$in = @$s->read();
-			}
-			$out = substr($out, 4);
-			$out = $AMF->destructAMF($out);
-		}
-		file_put_contents('maplog.txt',json_encode($out)."\n",FILE_APPEND);
-	}
+	$message = bin2hex(mcrypt_create_iv(50));
+	$mailMessage = $mail->_($message, "LEECH", "Hello");
+	$chatMessage = $chat->_("LEECH",$message);
+	$mailData = $AMF->AMFlength($mailMessage).$mailMessage;
+	$chatData = $AMF->AMFlength($chatMessage).$chatMessage;
+	$s->write($mailData);
+	$s->write($chatData);
+	$out = $s->read();
+	$out = substr($out, 4);
+	$out = $AMF->destructAMF($out);
+	echo "Sent ".$i." mails\n";
 }
-
+var_dump($out);
