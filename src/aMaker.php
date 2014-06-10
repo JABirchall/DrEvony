@@ -83,15 +83,15 @@ while(1){
 
 		//if(isset($response) && @$response->data['errorMsg'] === "NEED CAPTCHA"){
 		While(@$response->data['errorMsg'] === "NEED CAPTCHA"){
-			echo "[WARNING] CAPTCHA BITCH!".PHP_EOL;
+			echo "[WARNING] OH SHIT EVONY GAVE YOU A CAPTHCA!".PHP_EOL;
 			file_put_contents('captcha.png', hex2bin($response->data['captcha']));
 			unset($in);unset($out);
-			echo "[INFO] Opening captcha.png for manual user solving".PHP_EOL;
+			echo "[INFO] Opening captcha.png for manual user solving.".PHP_EOL;
 			exec('captcha.png');
-			echo "[REQUEST] Please solve the captcha: ";
+			echo "[REQUEST] Please solve the captcha; just type in the capthca text: ";
 			$captcha = fgets(STDIN);
 			$createplayer = NEW YaBOB_Common_Createnewplayer();
-			$player = $createplayer->_($UID,'','','','',trim(str_replace(PHP_EOL, '', $captcha)));
+			$player = $createplayer->_($UID,'Capital','BNH','','',trim(str_replace(PHP_EOL, '', $captcha)));
 			$createplayer = $AMF->AMFlength($player).$player;
 			$s->write($createplayer);
 			$in = $s->read();
@@ -104,12 +104,12 @@ while(1){
 		}
 
 		if($response->cmd === "common.createNewPlayer" && @$response->data['msg'] === "success"){
-			echo "[SUCCESS] Player created! Email: {$emailgen} Password: {$password} ";
+			echo "[SUCCESS] Player created with Email: {$emailgen} and Password: {$password} ";
 			$x = intval($response->data['player']['castles'][0]['fieldId'] % 800);
 			$y = intval($response->data['player']['castles'][0]['fieldId'] / 800);
 			echo "Castle coords: {$x},{$y} PlayerID: {$response->data['player']['castles'][0]['id']}".PHP_EOL;
 		}else if(isset($response) && $response->data['errorMsg'] === "All Valleys are already occupied, please choose another state. ") {
-			echo "[INFO] Server full".PHP_EOL;
+			echo "[INFO] No flats exist for your city to lay it's ass.".PHP_EOL;
 			exit("[EXIT] Server returned: {$response->data['errorMsg']}");
 		} else {
 			exit("[EXIT] Unknown error: {$response->data['errorMsg']}");
@@ -149,7 +149,7 @@ while(1){
 		$playerformat = "SERVER: {$server}, EMAIL: {$emailgen}, PASSWORD: {$password}, PLAYERNAME: {$UID}, COORD: {$x},{$y}".PHP_EOL;
 		file_put_contents("accounts.txt", $playerformat, FILE_APPEND);
 	}else if(@$response->data['errorMsg'] === "need create player"){
-		echo "[WARNING] Player mite of failed to create!".PHP_EOL;
+		echo "[WARNING] Account creation failed!".PHP_EOL;
 	} else {
 		var_dump($response);
 		exit("[EXIT] Server returned: {$response->data['errorMsg']}");
