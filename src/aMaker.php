@@ -91,7 +91,7 @@ while(1){
 			echo "[REQUEST] Please solve the captcha; just type in the capthca text: ";
 			$captcha = fgets(STDIN);
 			$createplayer = NEW YaBOB_Common_Createnewplayer();
-			$player = $createplayer->_($UID,'Capital','BNH','','',trim(str_replace(PHP_EOL, '', $captcha)));
+			$player = $createplayer->_($UID,'Capital','BNH','1','1',trim(str_replace(PHP_EOL, '', $captcha)));
 			$createplayer = $AMF->AMFlength($player).$player;
 			$s->write($createplayer);
 			$in = $s->read();
