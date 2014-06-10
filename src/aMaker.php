@@ -80,7 +80,7 @@ while(1){
 		$in = substr($out, 4);
 		$response = $AMF->destructAMF($in);
 		//var_dump($response);
-
+		
 		//if(isset($response) && @$response->data['errorMsg'] === "NEED CAPTCHA"){
 		While(@$response->data['errorMsg'] === "NEED CAPTCHA"){
 			echo "[WARNING] OH SHIT EVONY GAVE YOU A CAPTHCA!".PHP_EOL;
@@ -101,6 +101,11 @@ while(1){
 			}
 			$in = substr($out, 4);
 			$response = $AMF->destructAMF($in);
+
+			if(!isset($response->data)){
+				echo "[ERROR] Look's like someone pissed in Evony's Cheerios today; most likely just 1 hour IP banned by Evony.".PHP_EOL;
+				exit("[EXIT] Unexpected Error");
+			}
 		}
 
 		if($response->cmd === "common.createNewPlayer" && @$response->data['msg'] === "success"){
@@ -142,6 +147,11 @@ while(1){
 
 	$out = substr($out, 4);
 	$response = $AMF->destructAMF($out);
+	
+	if(!isset($response->data)){
+		echo "[ERROR] Look's like someone pissed in Evony's Cheerios today; most likely just 1 hour IP banned by Evony.".PHP_EOL;
+		exit("[EXIT] Unexpected Error");
+	}
 
 	if(@$response->data['msg'] === "login success"){
 		echo "[SUCCESS] server returned: {$response->data['msg']}".PHP_EOL;
