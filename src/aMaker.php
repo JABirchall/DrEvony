@@ -19,7 +19,7 @@ require_once('curl.php');
 
 $server = "185";
 
-echo "[INFO] Fetching server infomation for {$server}".PHP_EOL;
+echo "[INFO] Fetching server infomation for Evony Server # {$server}".PHP_EOL;
 
 $curl = NEW Curl;
 $return = $curl->get("http://{$server}.evony.com/config.xml");
@@ -30,21 +30,20 @@ $port = (int)$feed->port;
 echo "[INFO] Starting loop".PHP_EOL;
 
 while(1){
-	echo "[INFO] Creating random account".PHP_EOL;
+	echo "[INFO] Creating Evony account generated via randomness".PHP_EOL;
 
 	$UID = uniqid();
-	$emailgen = "{$UID}@lol.com";
-	$password = $UID;
-
+	$emailgen = "{$UID}@talentcraft.net";
+	$password = "potato";
 	$s = NEW Socket\Client($address,$port);
-	echo "[INFO] Connecting to {$address}:{$port}",PHP_EOL;
+	echo "[INFO] Connecting to {$address}:{$port} AKA Evony's Fun Land",PHP_EOL;
 
 	$AMF = NEW YaBOB_AMF();
 	$amfHandshake = NEW YaBOB_Handshake();
 	$amfReg = NEW YaBOB_Register;
 	$regInfo = $amfReg->_($emailgen, $password); unset($amfReg);
 	$regData = $AMF->AMFlength($regInfo).$regInfo;
-	echo "[INFO] Waiting for reply".PHP_EOL;
+	echo "[INFO] Waiting for a response".PHP_EOL;
 
 	$s->write($amfHandshake); unset($amfHandshake);
 	$s->write($regData);
@@ -53,17 +52,17 @@ while(1){
 	$in = substr($in, 4);
 	$response = $AMF->destructAMF($in);
 
-	echo "[INFO] Got reply!",PHP_EOL;
+	echo "[INFO] Recieved reply!",PHP_EOL;
 
 	//var_dump($response);
 
 	if(!isset($response->data)){
-		echo "[ERROR] Something has gone wrong, maybe IP blocked for 1 hour".PHP_EOL;
-		exit("[EXIT] Unexpected error");
+		echo "[ERROR] Look's like someone pissed in Evony's Cheerios today; most likely just 1 hour IP banned by Evony.".PHP_EOL;
+		exit("[EXIT] Unexpected Error");
 	}
 
 	if($response->data['errorMsg'] === "need create player"){
-		echo "[INFO] Creating player using email: {$emailgen} password: {$password}";
+		echo "[INFO] Creating player using generated email: {$emailgen} and password: {$password}";
 		$createplayer = NEW YaBOB_Common_Createnewplayer();
 		$player = $createplayer->_($UID, '','','','','');
 		$createplayer = $AMF->AMFlength($player).$player;
