@@ -12,8 +12,12 @@ require_once('YaBOB/Login.php');
 require_once('YaBOB/Register.php');
 require_once('YaBOB/Handshake.php');
 require_once('YaBOB/common/Createnewplayer.php');
-require_once('config.php');
 require_once('curl.php');
+
+//error_reporting(E_ALL);
+//ini_set('display_errors','on');
+
+$server = "185";
 
 echo "[INFO] Fetching server infomation for {$server}".PHP_EOL;
 
@@ -24,6 +28,7 @@ $feed = NEW SimpleXMLElement($return);
 $address = (String)$feed->server[0];
 $port = (int)$feed->port;
 echo "[INFO] Starting loop".PHP_EOL;
+
 while(1){
 	echo "[INFO] Creating random account".PHP_EOL;
 
@@ -50,15 +55,17 @@ while(1){
 
 	echo "[INFO] Got reply!",PHP_EOL;
 
+	//var_dump($response);
+
 	if(!isset($response->data)){
-		echo "[ERROR] Something has gone wrong, maybe finished".PHP_EOL;
+		echo "[ERROR] Something has gone wrong, maybe IP blocked for 1 hour".PHP_EOL;
 		exit("[EXIT] Unexpected error");
 	}
 
 	if($response->data['errorMsg'] === "need create player"){
-		echo "[INFO] Creating player";
+		echo "[INFO] Creating player using email: {$emailgen} password: {$password}";
 		$createplayer = NEW YaBOB_Common_Createnewplayer();
-		$player = $createplayer->_($UID, '','','','');
+		$player = $createplayer->_($UID, '','','','','');
 		$createplayer = $AMF->AMFlength($player).$player;
 		$s->write($createplayer);
 		$in = $s->read();
@@ -75,17 +82,36 @@ while(1){
 		$response = $AMF->destructAMF($in);
 		//var_dump($response);
 
-		if(isset($response) && @$response->data['errorMsg'] === "NEED CAPTCHA"){
-			echo "[ERROR] CAPTCHA BITCH!".PHP_EOL;
-			exit("[EXIT] YOU GOT CAPTCHA'D");
-		} else if($response->cmd === "common.createNewPlayer" && @$response->data['msg'] === "success"){
+		//if(isset($response) && @$response->data['errorMsg'] === "NEED CAPTCHA"){
+		While(@$response->data['errorMsg'] === "NEED CAPTCHA"){
+			echo "[WARNING] CAPTCHA BITCH!".PHP_EOL;
+			file_put_contents('captcha.png', hex2bin($response->data['captcha']));
+			unset($in);unset($out);
+			echo "[INFO] Opening captcha.png for manual user solving".PHP_EOL;
+			exec('captcha.png');
+			echo "[REQUEST] Please solve the captcha: ";
+			$captcha = fgets(STDIN);
+			$createplayer = NEW YaBOB_Common_Createnewplayer();
+			$player = $createplayer->_($UID,'','','','',trim(str_replace(PHP_EOL, '', $captcha)));
+			$createplayer = $AMF->AMFlength($player).$player;
+			$s->write($createplayer);
+			$in = $s->read();
+			while($in){
+				$out = @$out.$in;
+				$in = @$s->read();
+			}
+			$in = substr($out, 4);
+			$response = $AMF->destructAMF($in);
+		}
+
+		if($response->cmd === "common.createNewPlayer" && @$response->data['msg'] === "success"){
 			echo "[SUCCESS] Player created! Email: {$emailgen} Password: {$password} ";
 			$x = intval($response->data['player']['castles'][0]['fieldId'] % 800);
 			$y = intval($response->data['player']['castles'][0]['fieldId'] / 800);
 			echo "Castle coords: {$x},{$y} PlayerID: {$response->data['player']['castles'][0]['id']}".PHP_EOL;
 		}else if(isset($response) && $response->data['errorMsg'] === "All Valleys are already occupied, please choose another state. ") {
 			echo "[INFO] Server full".PHP_EOL;
-			exit("[EXIT] {$response->data['errorMsg']}");
+			exit("[EXIT] Server returned: {$response->data['errorMsg']}");
 		} else {
 			exit("[EXIT] Unknown error: {$response->data['errorMsg']}");
 		}
@@ -121,7 +147,7 @@ while(1){
 	if(@$response->data['msg'] === "login success"){
 		echo "[SUCCESS] server returned: {$response->data['msg']}".PHP_EOL;
 		echo "[INFO] Saving player data".PHP_EOL;
-		$playerformat = "EMAIL: {$emailgen}, PASSWORD: {$password}, PLAYERNAME: {$UID}, COORD: {$x},{$y}".PHP_EOL;
+		$playerformat = "SERVER: {$server}, EMAIL: {$emailgen}, PASSWORD: {$password}, PLAYERNAME: {$UID}, COORD: {$x},{$y}".PHP_EOL;
 		file_put_contents("accounts.txt", $playerformat, FILE_APPEND);
 	}else if(@$response->data['errorMsg'] === "need create player"){
 		echo "[WARNING] Player mite of failed to create!".PHP_EOL;

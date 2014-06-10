@@ -1,13 +1,5 @@
 <?php
-/*
-    socks5 class
-    by sergey krivoy(hide@address.com), 2004
- 
-    methods:
-        socks5($ip, $port) - constructor, $ip and $port - ip and port of anonymous socks5 proxy
-        connect($host, $port) - make a connection to $host:$port thru socks5 proxy. $host may be hostname or ip address
-        send($buffer, $length = 0) - send $buffer of $length bytes to connection. if $length not set - $length=strlen($buffer)
-*/
+
     class socks5 {
         var $socket;
         var $connected;
@@ -66,4 +58,3 @@
             return false;
         }
     }
-?>

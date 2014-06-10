@@ -26,7 +26,7 @@ class Client extends Server {
    *  
    *  @var  integer
    */
-  protected $timeout_seconds = 1;
+  protected $timeout_seconds = 3;
 
   /**
    *  create an instance

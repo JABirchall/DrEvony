@@ -5,7 +5,7 @@ class YaBOB_Common_Createnewplayer extends YaBOB_AMF{
 	public $cmd = 'common.createNewPlayer';
 	public $data;
 	
-	public function _($king, $castleName, $flag, $sex, $zone, $capcha=''){
+	public function _($king, $castleName, $flag, $sex, $zone, $captcha){
 
 		if(!$castleName){
 			$castleName = 'City Name';
@@ -31,11 +31,11 @@ class YaBOB_Common_Createnewplayer extends YaBOB_AMF{
 		    'flag' => $flag,
 		    'castleName' => $castleName,
 		    'userName' => $king,
-		    'captcha' => $capcha,
+		    'captcha' => $captcha,
 		    'sex' => (int)$sex,
 		);
 		
-		return $this->buildAMF((object) array('cmd'=>$this->cmd, 'data'=>$this->data ));
+		return $this->buildAMF((object) array('data'=>$this->data, 'cmd'=>$this->cmd));
 	}
 	
 	public function getFace($s){
