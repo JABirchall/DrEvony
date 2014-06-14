@@ -17,7 +17,8 @@ require_once('curl.php');
 //error_reporting(E_ALL);
 //ini_set('display_errors','on');
 
-$server = "183";
+echo "[REQUEST] Please enter the server number: ";
+$server = trim(str_replace(PHP_EOL, '', fgets(STDIN)));
 
 echo "[INFO] Fetching server infomation for Evony Server # {$server}".PHP_EOL;
 
