@@ -14,8 +14,8 @@ require_once('YaBOB/Handshake.php');
 require_once('YaBOB/common/Createnewplayer.php');
 require_once('curl.php');
 
-//error_reporting(E_ALL);
-//ini_set('display_errors','on');
+error_reporting(E_ALL);
+ini_set('display_errors','on');
 
 echo "[REQUEST] Please enter the server number: ";
 $server = trim(str_replace(PHP_EOL, '', fgets(STDIN)));
@@ -28,13 +28,16 @@ $return = $curl->get("http://{$server}.evony.com/config.xml");
 $feed = NEW SimpleXMLElement($return);
 $address = (String)$feed->server[0];
 $port = (int)$feed->port;
+
+//$address = "216.66.17.121";
+//$port = 443;
 echo "[INFO] Starting loop".PHP_EOL;
 
 while(1){
 	echo "[INFO] Creating Evony account generated via randomness".PHP_EOL;
 
 	$UID = uniqid();
-	$emailgen = "{$UID}@talentcraft.net";
+	$emailgen = "{$UID}@drwhat.net";
 	$password = "potato";
 	$s = NEW Socket\Client($address,$port);
 	echo "[INFO] Connecting to {$address}:{$port} AKA Evony's Fun Land",PHP_EOL;
@@ -65,7 +68,7 @@ while(1){
 	if($response->data['errorMsg'] === "need create player"){
 		echo "[INFO] Creating player using generated email: {$emailgen} and password: {$password}";
 		$createplayer = NEW YaBOB_Common_Createnewplayer();
-		$player = $createplayer->_($UID, '','','','','');
+		$player = $createplayer->_($UID, '','','',11,'');
 		$createplayer = $AMF->AMFlength($player).$player;
 		$s->write($createplayer);
 		$in = $s->read();
@@ -121,6 +124,7 @@ while(1){
 			exit("[EXIT] Unknown error: {$response->data['errorMsg']}");
 		}
 	}
+	//var_dump($response);
 
 	echo "[INFO] Closing connection".PHP_EOL;
 	unset($s);unset($response);unset($in);unset($out);
@@ -166,4 +170,6 @@ while(1){
 		exit("[EXIT] Server returned: {$response->data['errorMsg']}");
 	}
 	unset($s);unset($response);unset($in);unset($out);
+	echo "[INFO] Waiting 5 second to prevnt ban.".PHP_EOL;
+	sleep(5);
 }
